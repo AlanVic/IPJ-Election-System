@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Painel do Administrador</h3>
+
+<section>
+  <details open>
+    <summary><strong>Assembleia</strong></summary>
+    {% if assembly %}
+      <p>Atual: <strong>{{ assembly.name }}</strong></p>
+      <p>Presentes aptos: <span id="present">{{ stats.present or 0 }}</span> •
+         Já votaram (escrutínio atual): <span id="voted">{{ stats.voted or 0 }}</span>
+      </p>
+      <img src="{{ url_for('qrcode_join') }}" alt="QR Code de acesso" style="max-width:220px;border:1px solid #ddd">
+      <p><small class="muted">Projete este QR no telão: leva direto ao /join</small></p>
+    {% else %}
+      <form method="post" action="{{ url_for('admin_new_assembly') }}" class="grid">
+        <input name="name" placeholder="Nome da assembleia (ex: AGE de 20/09/2025)">
+        <label><input type="checkbox" name="req100" checked> Exigir 100% dos presentes votando por escrutínio</label>
+        <button type="submit">Abrir assembleia</button>
+      </form>
+    {% endif %}
+  </details>
+</section>
+
+{% if assembly %}
+<section class="grid grid-2">
+  <article>
+    <h4>Participantes (presentes & aptos)</h4>
+    <form method="post" action="{{ url_for('admin_add_attendee') }}" class="grid">
+      <input name="full_name" placeholder="Nome do membro">
+      <button type="submit">Adicionar</button>
+    </form>
+    <div>
+      {% for a in attendees %}
+        <span class="pill">
+          <a href="{{ url_for('admin_toggle_attendee', aid=a.id) }}" title="Alternar presença">
+            {{ a.full_name }}{% if not a.present %} (ausente){% endif %}
+          </a>
+        </span>
+      {% endfor %}
+    </div>
+  </article>
+
+  <article>
+    <h4>Candidatos (Presbíteros habilitados pelo Conselho)</h4>
+    <form method="post" action="{{ url_for('admin_add_candidate') }}" class="grid">
+      <input name="name" placeholder="Nome do candidato">
+      <button type="submit">Adicionar</button>
+    </form>
+    <div>
+      {% for c in candidates %}
+        <span class="pill">
+          <a href="{{ url_for('admin_toggle_candidate', cid=c.id) }}" title="Ativar/Inativar">
+            {{ c.name }}{% if not c.eligible %} (inativo){% endif %}
+          </a>
+        </span>
+      {% endfor %}
+    </div>
+  </article>
+</section>
+
+<section>
+  <details open>
+    <summary><strong>Escrutínio</strong></summary>
+    <form method="post" action="{{ url_for('admin_open_scrutiny') }}" class="grid grid-2">
+      <input name="title" placeholder="Título (ex: Presbíteros)">
+      <input type="number" min="1" name="vagas" placeholder="Vagas" value="3">
+      <input type="number" min="1" name="min_choices" placeholder="Mín. escolhas" value="1">
+      <input type="number" min="1" name="max_choices" placeholder="Máx. escolhas" value="3">
+      <button type="submit">Abrir novo escrutínio</button>
+    </form>
+
+    {% if scrutiny %}
+      <p>Atual: <strong>{{ scrutiny.title }}</strong>
+        {% if scrutiny.is_open %}
+          — <a href="{{ url_for('admin_close_scrutiny', sid=scrutiny.id) }}">Encerrar</a>
+        {% else %}
+          — Encerrado em {{ scrutiny.closed_at }}
+        {% endif %}
+      </p>
+      <p><a href="{{ url_for('admin_results', sid=scrutiny.id) }}">Ver resultados parciais</a></p>
+    {% endif %}
+  </details>
+</section>
+{% endif %}
+
+<script>
+  {% if assembly and stats.open_scr %}
+  setInterval(async ()=>{
+    const r = await fetch("{{ url_for('admin_api_status') }}");
+    const j = await r.json();
+    document.getElementById('present').textContent = j.present;
+    document.getElementById('voted').textContent = j.voted;
+    // opcional: travar encerramento quando 100% exigido
+  }, 3000);
+  {% endif %}
+</script>
+{% endblock %}

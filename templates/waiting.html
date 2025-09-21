@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+  <h3>Aguarde…</h3>
+  <p class="muted">Nenhum escrutínio está aberto agora. Assim que abrir, esta página atualizará.</p>
+  <script>
+    setInterval(()=>location.reload(), 5000);
+  </script>
+{% endblock %}

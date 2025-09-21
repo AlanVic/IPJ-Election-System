@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+  <h3>Administrador</h3>
+  <form method="post" class="grid">
+    <input name="email" placeholder="E-mail" value="admin@igreja.local" required>
+    <input type="password" name="password" placeholder="Senha" required>
+    <button type="submit">Entrar</button>
+  </form>
+{% endblock %}

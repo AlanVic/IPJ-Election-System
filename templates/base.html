@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{{ title or 'Votação IPB' }}</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <style>
+    .pill { display:inline-block; padding:.15rem .5rem; border-radius:999px; background:#eee; margin:.1rem .2rem;}
+    .grid{display:grid; gap:1rem;}
+    .grid-2{grid-template-columns:1fr 1fr;}
+    .muted{color:#888}
+  </style>
+</head>
+<body class="container">
+  <nav>
+    <ul>
+      <li><strong>Votação IPB</strong></li>
+    </ul>
+    <ul>
+      {% if current_user.is_authenticated %}
+        <li><a href="{{ url_for('admin_dashboard') }}">Admin</a></li>
+        <li><a href="{{ url_for('admin_logout') }}">Sair</a></li>
+      {% else %}
+        <li><a href="{{ url_for('admin_login') }}">Admin</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for cat, msg in messages %}
+        <article class="contrast"><small><strong>{{cat|upper}}</strong> — {{ msg }}</small></article>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+  <h3>{{ scrutiny.title }}</h3>
+  {% if already %}
+    <article class="contrast">Seu voto neste escrutínio já foi registrado. Aguarde o próximo.</article>
+  {% else %}
+  <p>Selecione entre <strong>{{ scrutiny.min_choices }}</strong> e <strong>{{ scrutiny.max_choices }}</strong> nomes.</p>
+  <form method="post">
+    {% for c in candidates %}
+      <label>
+        <input type="checkbox" name="candidates" value="{{ c.id }}">
+        {{ c.name }}
+      </label><br/>
+    {% endfor %}
+    <button type="submit">Enviar voto</button>
+  </form>
+  {% endif %}
+{% endblock %}

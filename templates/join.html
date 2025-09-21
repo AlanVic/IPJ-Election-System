@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+  <h3>Identificação para votar</h3>
+  <p class="muted">Digite seu nome exatamente como informado ao secretário.</p>
+  <form method="post" class="grid">
+    <input name="name" placeholder="Seu nome completo" autofocus required>
+    <button type="submit">Entrar</button>
+  </form>
+{% endblock %}

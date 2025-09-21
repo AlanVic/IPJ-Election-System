@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+  <h3>Voto registrado ✅</h3>
+  <p class="muted">Obrigado. Aguarde instruções do moderador.</p>
+  <script>
+    setTimeout(()=>location.href='{{ url_for("vote") }}', 5000);
+  </script>
+{% endblock %}

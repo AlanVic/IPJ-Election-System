@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Bem-vindo</h2>
+  {% if assembly %}
+    <p>Assembleia aberta: <strong>{{ assembly.name }}</strong></p>
+    <a href="{{ url_for('join') }}" role="button">Entrar para votar</a>
+  {% else %}
+    <p class="muted">Nenhuma assembleia aberta.</p>
+  {% endif %}
+{% endblock %}

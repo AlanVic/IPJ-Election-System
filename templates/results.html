@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Resultados — {{ scrutiny.title }}</h3>
+<p>Presentes aptos: <strong>{{ present }}</strong> • Cédulas recebidas: <strong>{{ ballots }}</strong></p>
+<table>
+  <thead><tr><th>Candidato</th><th>Votos</th><th>% dos presentes</th></tr></thead>
+  <tbody>
+  {% for r in results %}
+    <tr>
+      <td>{{ r.candidate.name }}</td>
+      <td>{{ r.votes }}</td>
+      <td>{{ '%.2f'|format(r.pct_present) }}%</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{% if winners and not scrutiny.is_open %}
+  <article class="contrast">
+    <h4>Eleitos (≥ 50% dos presentes, limitado a {{ scrutiny.vagas }} vagas)</h4>
+    <ul>
+      {% for w in winners %}
+        <li>{{ w.candidate.name }} — {{ '%.2f'|format(w.pct_present) }}%</li>
+      {% endfor %}
+    </ul>
+  </article>
+{% else %}
+  <p class="muted">Se ninguém alcançou 50% ou ainda há vagas, abra novo escrutínio (e, a partir do 3º, limite aos mais votados conforme o Estatuto/CI).</p>
+{% endif %}
+{% endblock %}
